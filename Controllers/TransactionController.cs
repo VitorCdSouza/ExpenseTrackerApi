@@ -21,6 +21,14 @@ public class TransactionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Transaction>> CreateTransaction(Transaction transaction)
     {
+        Account ?account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == transaction.AccountId);
+        if (account == null)
+        {
+            return BadRequest("Conta não encontrada.");
+        }
+
+        transaction.Account = account;
+        
         _context.Transactions.Add(transaction);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetTransactions), new { accountId = transaction.AccountId }, transaction);

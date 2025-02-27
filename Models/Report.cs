@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 public class Report
 {
+    [Key]
     public int Id { get; set; }
     public float TotalIn { get; set; }
     public float TotalOut { get; set; }

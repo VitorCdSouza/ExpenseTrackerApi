@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExpenseTrackerApi.Migrations
 {
     [DbContext(typeof(ExpenseTrackerContext))]
-    [Migration("20250227133250_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250227171852_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace ExpenseTrackerApi.Migrations
                     b.Property<float>("Balance")
                         .HasColumnType("real");
 
-                    b.Property<string>("Nome")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
