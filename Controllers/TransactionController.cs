@@ -15,7 +15,7 @@ public class TransactionController : ControllerBase
     [HttpGet("{accountId}")]
     public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions(int accountId)
     {
-        return await _context.Transactions.Where(t => t.AccountId == accountId).ToListAsync();
+        return await _context.Transactions.Include(a => a.Account).Where(t => t.AccountId == accountId).ToListAsync();
     }
 
     [HttpPost]
@@ -28,8 +28,15 @@ public class TransactionController : ControllerBase
         }
 
         transaction.Account = account;
+
+        if (transaction.Type == "income") {
+            account.Balance += transaction.Amount;
+        } else {
+            account.Balance -= transaction.Amount;
+        }
         
         _context.Transactions.Add(transaction);
+        _context.Accounts.Update(account);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetTransactions), new { accountId = transaction.AccountId }, transaction);
     }

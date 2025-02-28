@@ -132,3 +132,4 @@ C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\refin
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ExpenseTrackerApi.pdb
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ExpenseTrackerApi.genruntimeconfig.cache
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ref\ExpenseTrackerApi.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ExpenseTrackerApi.sourcelink.json
