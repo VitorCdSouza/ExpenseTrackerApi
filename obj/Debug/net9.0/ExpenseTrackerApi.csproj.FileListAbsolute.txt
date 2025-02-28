@@ -133,3 +133,8 @@ C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\Expen
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ExpenseTrackerApi.genruntimeconfig.cache
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ref\ExpenseTrackerApi.dll
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\obj\Debug\net9.0\ExpenseTrackerApi.sourcelink.json
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll

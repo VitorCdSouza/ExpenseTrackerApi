@@ -10,5 +10,7 @@ public class Transaction
     
     [Required]
     public int AccountId { get; set; }
+
+    [JsonIgnore]
     public Account ?Account { get; set; }
 }

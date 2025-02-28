@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using ExpenseTrackerApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,26 +20,68 @@ public class UserController : ControllerBase
         return await _context.Users.Include(u => u.Account).ToListAsync();
     }
 
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser(CreateUserDto dto)
+    [HttpGet("{userId}")]
+    public async Task<ActionResult<User>> GetUserById(int userId)
     {
-        if (dto.Email == null || dto.PasswordHash == null || dto.Name == null) {
-            return BadRequest("Campos não podem ser nulos.");
+        User? user = await _context.Users.Include(a => a.Account).FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            return BadRequest("User does not exist");
         }
+
+        return Ok(user);
+    }
+
+    [HttpPost("Register")]
+    public async Task<ActionResult<User>> RegisterUser(CreateUserDto dto)
+    {
+        if (dto.Email == null || dto.Password == null || dto.Name == null)
+        {
+            return BadRequest("Empty fields");
+        }
+
         User user = new User
         {
             Email = dto.Email,
-            PasswordHash = dto.PasswordHash
+            Password = dto.Password
         };
+
         Account acc = new Account
         {
             Name = dto.Name,
             User = user,
         };
 
+        Encryption.CreatePasswordHash(user.Password, out byte[] hash, out byte[] salt);
+        user.Password = string.Empty;
+        user.PasswordHash = hash;
+        user.PasswordSalt = salt;
+
         user.Account = acc;
+
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);
+    }
+
+    [HttpPost("Login")]
+    public async Task<ActionResult<User>> LoginUser(AuthUserDto dto)
+    {
+        if (dto.Email == null || dto.Password == null)
+        {
+            return BadRequest("Empty fields");
+        }
+
+        User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+        if (user == null)
+        {
+            return BadRequest("Invalid credentials");
+        }
+        else if (!Encryption.VerifyPasswordHash(dto.Password, user.PasswordHash, user.PasswordSalt))
+        {
+            return BadRequest("Invalid credentials");
+        }
+
+        return Ok("Foi");
     }
 }

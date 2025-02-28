@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExpenseTrackerApi.Migrations
 {
     [DbContext(typeof(ExpenseTrackerContext))]
-    [Migration("20250227171852_InitialMigration")]
+    [Migration("20250228145947_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -113,9 +113,11 @@ namespace ExpenseTrackerApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
