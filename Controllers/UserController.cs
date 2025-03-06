@@ -1,17 +1,52 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
+using System.Text;
 using ExpenseTrackerApi.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class UserController : ControllerBase
 {
     private readonly ExpenseTrackerContext _context;
+    private readonly IConfiguration _configuration;
 
-    public UserController(ExpenseTrackerContext context)
+    public UserController(ExpenseTrackerContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
+    }
+
+    private string CreateToken(User usr)
+    {
+        List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Actor, usr.Id.ToString()),
+                new Claim(ClaimTypes.Email, usr.Email),
+            };
+
+        string? keyValue = _configuration.GetSection("TokenConfiguration:Key").Value;
+        if (string.IsNullOrEmpty(keyValue))
+        {
+            throw new InvalidOperationException("Token key is not configured.");
+        }
+
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue));
+        SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.Now.AddYears(1),
+            SigningCredentials = creds
+        };
+        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 
     [HttpGet]
@@ -32,6 +67,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [AllowAnonymous]
     [HttpPost("Register")]
     public async Task<ActionResult<User>> RegisterUser(CreateUserDto dto)
     {
@@ -64,6 +100,7 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);
     }
 
+    [AllowAnonymous]
     [HttpPost("Login")]
     public async Task<ActionResult<User>> LoginUser(AuthUserDto dto)
     {
@@ -82,6 +119,8 @@ public class UserController : ControllerBase
             return BadRequest("Invalid credentials");
         }
 
-        return Ok("Foi");
+        string token = CreateToken(user);
+
+        return Ok(token);
     }
 }

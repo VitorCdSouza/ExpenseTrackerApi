@@ -1,0 +1,1 @@
+Change gets where id is passed through parameters (get it from token)

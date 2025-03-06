@@ -138,3 +138,6 @@ C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Micro
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\Vitor Souza\Documents\Projetos\ExpenseTrackerApi\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
