@@ -32,5 +32,19 @@ namespace ExpenseTrackerApi.Utils
                 return true;
             }
         }
+
+        public static string GetIdUserByToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            var idUser = jsonToken?.Actor;
+            if (idUser == null)
+            {
+                return "erro";
+            }
+
+            return idUser;
+        }
     }
 }

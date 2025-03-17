@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
+using ExpenseTrackerApi.Controllers;
 using ExpenseTrackerApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly ExpenseTrackerContext _context;
     private readonly IConfiguration _configuration;
@@ -41,7 +42,7 @@ public class UserController : ControllerBase
         SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddYears(1),
+            Expires = DateTime.Now.AddMonths(1),
             SigningCredentials = creds
         };
         JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
@@ -49,16 +50,14 @@ public class UserController : ControllerBase
         return tokenHandler.WriteToken(token);
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-    {
-        return await _context.Users.Include(u => u.Account).ToListAsync();
-    }
+   
 
-    [HttpGet("{userId}")]
-    public async Task<ActionResult<User>> GetUserById(int userId)
+    [HttpGet]
+    public async Task<ActionResult<User>> GetUserById()
     {
-        User? user = await _context.Users.Include(a => a.Account).FirstOrDefaultAsync(u => u.Id == userId);
+        int userId = GetUserIdToken();
+
+        User ?user = await _context.Users.Include(a => a.Account).FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null)
         {
             return BadRequest("User does not exist");
@@ -97,7 +96,7 @@ public class UserController : ControllerBase
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);
+        return Ok(user);
     }
 
     [AllowAnonymous]

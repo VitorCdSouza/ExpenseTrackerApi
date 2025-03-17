@@ -1,3 +1,5 @@
+using ExpenseTrackerApi.Controllers;
+using ExpenseTrackerApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class TransactionController : ControllerBase
+public class TransactionController : BaseController
 {
     private readonly ExpenseTrackerContext _context;
 
@@ -14,21 +16,26 @@ public class TransactionController : ControllerBase
         _context = context;
     }
 
-    [HttpGet("{accountId}")]
-    public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions(int accountId)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
     {
-        return await _context.Transactions.Include(a => a.Account).Where(t => t.AccountId == accountId).ToListAsync();
+        int userId = GetUserIdToken();
+
+        return await _context.Transactions.Include(a => a.Account).Where(t => t.AccountId == userId).ToListAsync();
     }
 
     [HttpPost]
     public async Task<ActionResult<Transaction>> CreateTransaction(Transaction transaction)
     {
-        Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == transaction.AccountId);
+        int userId = GetUserIdToken();
+
+        Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.UserId == userId);
         if (account == null)
         {
             return BadRequest("Account not found");
         }
 
+        transaction.AccountId = account.Id;
         transaction.Account = account;
 
         if (transaction.Type == "income")
@@ -49,6 +56,8 @@ public class TransactionController : ControllerBase
     [HttpDelete("{transactionId}")]
     public async Task<ActionResult<Transaction>> DeleteTransaction(int transactionId)
     {
+        int userId = GetUserIdToken();
+
         Transaction? transaction = await _context.Transactions.FirstOrDefaultAsync(t => t.Id == transactionId);
         if (transaction == null)
         {
@@ -59,6 +68,10 @@ public class TransactionController : ControllerBase
         if (account == null)
         {
             return BadRequest("Transaction without account");
+        }
+
+        if (account.UserId != userId) {
+            return BadRequest("Operation invalid");
         }
 
         if (transaction.Type == "income")
